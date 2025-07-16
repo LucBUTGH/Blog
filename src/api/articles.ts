@@ -1,0 +1,60 @@
+const API_URL = import.meta.env.VITE_API_URL;
+
+export const fetchArticles = async () => {
+  try {
+    const response = await fetch(`${API_URL}/articles?populate=tags`);
+    const data = await response.json();
+
+    return data.data.map((item: any) => ({
+      id: item.id,
+      documentId: item.documentId,
+      title: item.title,
+      short_desc: item.short_desc,
+      content: item.content,
+      date: item.date,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+      publishedAt: item.publishedAt,
+      tags:
+        item.tags?.map((tag: any) => ({
+          id: tag.id,
+          category: tag.category,
+        })) || [],
+    }));
+  } catch (error) {
+    console.error("Error fetching articles:", error);
+    throw error;
+  }
+};
+
+export const fetchArticleByDocumentId = async (documentId: any) => {
+  const response = await fetch(
+    `${API_URL}/articles?filters[documentId][$eq]=${documentId}&populate=tags`
+  );
+  const data = await response.json();
+  console.log(data);
+
+  if (data.data.length === 0) {
+    return null; // Pas trouvé
+  }
+
+  const item = data.data[0];
+
+  return {
+    id: item.id,
+    documentId: item.documentId,
+    title: item.title,
+    short_desc: item.short_desc,
+    content: item.content,
+    date: item.date,
+    createdAt: item.createdAt,
+    updatedAt: item.updatedAt,
+    publishedAt: item.publishedAt,
+    tags:
+      item.tags?.map((tag: any) => ({
+        id: tag.id,
+        category: tag.category,
+      })) || [],
+    source: item.source,
+  };
+};
