@@ -1,14 +1,19 @@
-<script setup lang="ts">
+<script setup>
 import { computed } from "vue";
 import { useRouter } from "vue-router";
-import type { Article } from "../types/article";
 import TagBadge from "./TagBadge.vue";
 import { format } from "date-fns";
 
-const props = defineProps<{
-  article: Article;
-  delay?: number;
-}>();
+const props = defineProps({
+  article: {
+    type: Object,
+    required: true
+  },
+  delay: {
+    type: Number,
+    default: 0
+  }
+});
 
 const router = useRouter();
 
@@ -31,12 +36,12 @@ const viewArticle = () => {
 
 <template>
   <article
-    class="card overflow-hidden hover:translate-y-[-4px] transition-all duration-300 animate-fade-in"
+    class="card group overflow-hidden hover:translate-y-[-4px] transition-all duration-300 animate-fade-in"
     :style="animationStyle"
     @click="viewArticle"
   >
-    <div class="p-6">
-      <div class="flex flex-wrap gap-2 mb-3">
+    <div class="p-6 md:p-8">
+      <div class="flex flex-wrap gap-2 mb-4">
         <TagBadge
           v-for="tag in article.tags"
           :key="tag.id"
@@ -44,23 +49,29 @@ const viewArticle = () => {
         />
       </div>
 
-      <h2 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+      <h2 class="text-2xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-200 font-serif">
         {{ article.title }}
       </h2>
 
-      <p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+      <p class="text-gray-600 dark:text-gray-300 mb-6 line-clamp-3 text-base">
         {{ article.short_desc }}
       </p>
 
       <div
-        class="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400"
+        class="flex justify-between items-center text-sm font-medium"
       >
-        <time>{{ formattedDate }}</time>
+        <time class="text-gray-500 dark:text-gray-400 italic">
+          {{ formattedDate }}
+        </time>
         <span
-          class="inline-flex items-center text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+          class="inline-flex items-center text-primary-600 group-hover:text-primary-700 dark:text-primary-400 dark:group-hover:text-primary-300 transition-colors duration-200"
         >
-          Read more
-          <svg class="w-4 h-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+          Lire l'article
+          <svg 
+            class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-200" 
+            viewBox="0 0 20 20" 
+            fill="currentColor"
+          >
             <path
               fill-rule="evenodd"
               d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"

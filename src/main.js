@@ -29,3 +29,17 @@ app.use(router);
 
 // Mount app
 app.mount("#app");
+
+// Setup keepalive
+const API_URL = import.meta.env.VITE_API_URL;
+const keepalive = async () => {
+  try {
+    const response = await fetch(`${API_URL}/articles?pagination[pageSize]=1`);
+    console.log("Keepalive ping successful");
+  } catch (error) {
+    console.error("Keepalive ping failed:", error);
+  }
+};
+
+// Run keepalive every 10 seconds
+setInterval(keepalive, 10000);

@@ -5,7 +5,7 @@ export const fetchArticles = async () => {
     const response = await fetch(`${API_URL}/articles?populate=tags`);
     const data = await response.json();
 
-    return data.data.map((item: any) => ({
+    return data.data.map((item) => ({
       id: item.id,
       documentId: item.documentId,
       title: item.title,
@@ -16,7 +16,7 @@ export const fetchArticles = async () => {
       updatedAt: item.updatedAt,
       publishedAt: item.publishedAt,
       tags:
-        item.tags?.map((tag: any) => ({
+        item.tags?.map((tag) => ({
           id: tag.id,
           category: tag.category,
         })) || [],
@@ -27,7 +27,7 @@ export const fetchArticles = async () => {
   }
 };
 
-export const fetchArticleByDocumentId = async (documentId: any) => {
+export const fetchArticleByDocumentId = async (documentId) => {
   const response = await fetch(
     `${API_URL}/articles?filters[documentId][$eq]=${documentId}&populate=tags`
   );
@@ -51,7 +51,7 @@ export const fetchArticleByDocumentId = async (documentId: any) => {
     updatedAt: item.updatedAt,
     publishedAt: item.publishedAt,
     tags:
-      item.tags?.map((tag: any) => ({
+      item.tags?.map((tag) => ({
         id: tag.id,
         category: tag.category,
       })) || [],
