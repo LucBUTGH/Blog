@@ -38,8 +38,9 @@ const keepalive = async () => {
     console.log("Keepalive ping successful");
   } catch (error) {
     console.error("Keepalive ping failed:", error);
+
+    setInterval(keepalive, 10000);
   }
 };
 
-// Run keepalive every 10 seconds
-setInterval(keepalive, 10000);
+keepalive();

@@ -65,35 +65,71 @@
 
   .prose {
     @apply prose-headings:font-serif prose-headings:font-medium prose-headings:tracking-tight
-    prose-h1:text-3xl prose-h1:md:text-4xl
-    prose-h2:text-2xl prose-h2:md:text-3xl
-    prose-h3:text-xl prose-h3:md:text-2xl
-    prose-p:text-gray-700 prose-p:dark:text-gray-300
-    prose-a:text-primary-600 prose-a:dark:text-primary-400 prose-a:no-underline hover:prose-a:underline
-    prose-strong:text-gray-900 prose-strong:dark:text-white
-    prose-code:text-primary-600 prose-code:dark:text-primary-400
-    prose-pre:bg-gray-100 prose-pre:dark:bg-gray-800
-    prose-blockquote:border-primary-500 prose-blockquote:text-gray-700 prose-blockquote:dark:text-gray-300
-    prose-img:rounded-xl;
+      prose-h1:text-3xl prose-h1:md:text-4xl
+      prose-h2:text-2xl prose-h2:md:text-3xl
+      prose-h3:text-xl prose-h3:md:text-2xl
+      prose-p:text-gray-700 prose-p:dark:text-gray-300
+      prose-a:text-primary-600 prose-a:dark:text-primary-400 prose-a:no-underline hover:prose-a:underline
+      prose-strong:text-gray-900 prose-strong:dark:text-white
+      prose-code:text-white prose-code:dark:text-white
+      prose-pre:bg-gray-800 prose-pre:dark:bg-gray-800
+      prose-blockquote:border-primary-500 prose-blockquote:text-gray-700 prose-blockquote:dark:text-gray-300
+      prose-img:rounded-xl;
+  }
+
+  pre {
+    background-color: rgb(31, 41, 55);
+    border-radius: 0 0 0.5em 0.5em; /* Retirez le border-radius en haut */
+    color: #ffffff;
+  }
+
+  code {
+    font-family: monospace;
+    background-color: rgb(
+      31,
+      41,
+      55
+    ) !important; /* !important here for forcing dark background */
+    color: #ffffff !important; /* !important here for forcing light text */
   }
 }
-
-.page-enter-active,
-.page-leave-active {
-  @apply transition-all duration-300 ease-in-out;
+/* !important is here for overriding hljs-string */
+.hljs-string {
+  color: #ff9800 !important; /* Orange */
 }
 
-.page-enter-from,
-.page-leave-to {
-  @apply opacity-0 translate-y-4;
+.copy-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 1em;
+  display: flex;
+  align-items: center;
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  @apply transition-opacity duration-300 ease-in-out;
+.copy-button svg {
+  color: white;
 }
 
-.fade-enter-from,
-.fade-leave-to {
-  @apply opacity-0;
+.language-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgb(31, 41, 55);
+  color: white;
+  padding: 0.5em 1em;
+  font-family: monospace;
+  font-size: 0.8em;
+  border-radius: 0.5em 0.5em 0 0;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  z-index: 1000;
 }

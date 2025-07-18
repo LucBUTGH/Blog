@@ -1,11 +1,26 @@
 <script setup lang="ts">
 import { format } from "date-fns";
+import hljs from "highlight.js";
+import "highlight.js/styles/github.css";
 import { marked } from "marked";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { fetchArticleByDocumentId } from "../api/articles";
 import TagBadge from "../components/TagBadge.vue";
 import type { Article } from "../types/article";
+
+const ICON_COPY = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 16V7a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v9a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3z"></path>
+    <rect x="6" y="12" width="10" height="10" rx="1"></rect>
+  </svg>
+`;
+
+const ICON_CHECK = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>
+`;
 
 const router = useRouter();
 const route = useRoute();
@@ -16,7 +31,6 @@ const error = ref<string | null>(null);
 const fetchArticle = async (documentId: string) => {
   loading.value = true;
   error.value = null;
-
   try {
     article.value = await fetchArticleByDocumentId(documentId);
     console.log(article.value);
@@ -28,9 +42,69 @@ const fetchArticle = async (documentId: string) => {
   }
 };
 
-const renderedContent = computed(() =>
-  article.value ? marked(article.value.content) : ""
-);
+const renderedContent = computed(() => {
+  if (!article.value) return "";
+  let content = marked(article.value.content);
+  return addLanguageBanners(content);
+});
+
+const showToast = ref(false);
+const toastMessage = ref("");
+
+const copyToClipboard = (text: string, button: HTMLButtonElement) => {
+  console.log("Attempting to copy to clipboard");
+  navigator.clipboard.writeText(text).then(
+    () => {
+      console.log("Successfully copied to clipboard");
+      if (button) {
+        button.innerHTML = ICON_CHECK;
+        setTimeout(() => {
+          button.innerHTML = ICON_COPY;
+          console.log("Icon reverted to copy");
+        }, 2600);
+      }
+      toastMessage.value = "Content copied!";
+      showToast.value = true;
+      setTimeout(() => {
+        showToast.value = false;
+      }, 2600);
+    },
+    (err) => {
+      console.error("Could not copy text: ", err);
+    }
+  );
+};
+
+const addLanguageBanners = (html) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  const codeBlocks = doc.querySelectorAll("pre code");
+  codeBlocks.forEach((block) => {
+    const preBlock = block.parentElement;
+    const classList = Array.from(block.classList);
+    const languageClass = classList.find((className) =>
+      className.startsWith("language-")
+    );
+    if (languageClass) {
+      const language = languageClass.replace("language-", "");
+      const banner = document.createElement("div");
+      banner.className = "language-banner";
+      const languageText = document.createElement("span");
+      languageText.textContent = language;
+      banner.appendChild(languageText);
+      const copyButton = document.createElement("button");
+      copyButton.className = "copy-button";
+      copyButton.innerHTML = ICON_COPY;
+      copyButton.addEventListener("click", () => {
+        console.log("Copy button clicked");
+        copyToClipboard(block.textContent, copyButton);
+      });
+      banner.appendChild(copyButton);
+      preBlock.insertBefore(banner, block);
+    }
+  });
+  return doc.body.innerHTML;
+};
 
 const formattedDate = (dateString: string) => {
   try {
@@ -42,6 +116,14 @@ const formattedDate = (dateString: string) => {
 
 const goBack = () => {
   router.push("/");
+};
+
+const highlightCode = () => {
+  nextTick(() => {
+    document.querySelectorAll("pre code").forEach((block) => {
+      hljs.highlightElement(block as HTMLElement);
+    });
+  });
 };
 
 onMounted(() => {
@@ -58,6 +140,46 @@ watch(
     }
   }
 );
+
+const extractCodeLanguage = () => {
+  nextTick(() => {
+    const codeBlocks = document.querySelectorAll("pre code");
+    codeBlocks.forEach((block) => {
+      const classList = block.classList;
+      for (let className of classList) {
+        if (className.startsWith("language-")) {
+          const language = className.replace("language-", "");
+          console.log("Language found:", language);
+        }
+      }
+    });
+  });
+};
+
+const attachCopyListeners = () => {
+  nextTick(() => {
+    const copyButtons = document.querySelectorAll(".copy-button");
+    console.log("Attaching copy listeners to buttons:", copyButtons);
+    copyButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        console.log("Copy button event listener triggered");
+        const pre = button.closest("pre");
+        if (pre) {
+          const block = pre.querySelector("code");
+          if (block) {
+            copyToClipboard(block.textContent, button);
+          }
+        }
+      });
+    });
+  });
+};
+
+watch(renderedContent, () => {
+  highlightCode();
+  extractCodeLanguage();
+  attachCopyListeners();
+});
 </script>
 
 <template>
@@ -211,5 +333,13 @@ watch(
         Go back to Articles
       </button>
     </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div
+    v-if="showToast"
+    class="fixed bottom-4 right-4 bg-[#111827] border border-white text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-fade-in"
+  >
+    {{ toastMessage }}
   </div>
 </template>
