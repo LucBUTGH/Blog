@@ -21,6 +21,7 @@ export const fetchArticles = async () => {
           category: tag.category,
         })) || [],
       time_read: item.time_read,
+      title_slug: item.title_slug,
     }));
   } catch (error) {
     console.error("Error fetching articles:", error);
@@ -28,9 +29,9 @@ export const fetchArticles = async () => {
   }
 };
 
-export const fetchArticleByDocumentId = async (documentId) => {
+export const fetchArticleBySlug = async (slug) => {
   const response = await fetch(
-    `${API_URL}/articles?filters[documentId][$eq]=${documentId}&populate=tags&populate=source`
+    `${API_URL}/articles?filters[title_slug][$eq]=${slug}&populate=*`
   );
   const data = await response.json();
   console.log(data);

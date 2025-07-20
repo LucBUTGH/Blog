@@ -3,9 +3,8 @@ import { computed, onMounted, ref } from "vue";
 import { fetchArticles } from "../api/articles";
 import ArticleCard from "../components/ArticleCard.vue";
 import ArticleSkeleton from "../components/ArticleSkeleton.vue";
-import type { Article } from "../types/article";
 
-const articles = ref<Article[]>([]);
+const articles = ref([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
 const selectedTag = ref<string | null>(null);

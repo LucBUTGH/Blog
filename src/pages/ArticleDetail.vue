@@ -5,7 +5,7 @@ import "highlight.js/styles/github.css";
 import { marked } from "marked";
 import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { fetchArticleByDocumentId } from "../api/articles";
+import { fetchArticleBySlug } from "../api/articles";
 import TagBadge from "../components/TagBadge.vue";
 
 const ICON_COPY = `
@@ -26,11 +26,11 @@ const article = ref(null);
 const loading = ref(true);
 const error = ref<string | null>(null);
 
-const fetchArticle = async (documentId: string) => {
+const fetchArticle = async (slug: string) => {
   loading.value = true;
   error.value = null;
   try {
-    article.value = await fetchArticleByDocumentId(documentId);
+    article.value = await fetchArticleBySlug(slug);
     console.log(article.value);
   } catch (err) {
     error.value = "Failed to load article. Please try again later.";

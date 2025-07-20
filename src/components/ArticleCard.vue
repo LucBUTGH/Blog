@@ -30,7 +30,7 @@ const animationStyle = computed(() => ({
 }));
 
 const viewArticle = () => {
-  router.push(`/article/${props.article.documentId}`);
+  router.push(`/article/${props.article.title_slug}`);
 };
 </script>
 
