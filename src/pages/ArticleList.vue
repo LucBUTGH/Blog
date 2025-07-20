@@ -57,7 +57,7 @@ onMounted(async () => {
       <p
         class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto animate-slide-down"
       >
-        Des informations récurrentes sur le web et les technologies futures
+        Des informations récurrentes sur le web et les technologies futures 🚀
       </p>
     </div>
 
