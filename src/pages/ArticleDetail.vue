@@ -289,7 +289,8 @@ watch(renderedContent, () => {
               <circle cx="12" cy="12" r="10" />
               <polyline points="12,6 12,12 16,14" />
             </svg>
-            {{ article.time_read }} minutes de lecture
+            {{ article.time_read }}
+            {{ article.time_read === 1 ? "minute" : "minutes" }} de lecture
           </span>
         </div>
 
