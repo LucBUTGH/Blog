@@ -271,10 +271,26 @@ watch(renderedContent, () => {
         </div>
 
         <div
-          class="text-gray-600 dark:text-gray-400 mb-6 animate-slide-down"
-          style="animation-delay: 0.2s"
+          class="text-gray-600 dark:text-gray-400 mb-6 flex items-center gap-3 animate-slide-down"
         >
           <time>{{ formattedDate(article.date) }}</time>
+          <span
+            class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-xs font-medium"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12,6 12,12 16,14" />
+            </svg>
+            {{ article.time_read }} minutes de lecture
+          </span>
         </div>
 
         <div

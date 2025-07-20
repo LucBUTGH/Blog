@@ -1,18 +1,18 @@
 <script setup>
+import { format } from "date-fns";
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import TagBadge from "./TagBadge.vue";
-import { format } from "date-fns";
 
 const props = defineProps({
   article: {
     type: Object,
-    required: true
+    required: true,
   },
   delay: {
     type: Number,
-    default: 0
-  }
+    default: 0,
+  },
 });
 
 const router = useRouter();
@@ -49,7 +49,9 @@ const viewArticle = () => {
         />
       </div>
 
-      <h2 class="text-2xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-200 font-serif">
+      <h2
+        class="text-2xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-200 font-serif"
+      >
         {{ article.title }}
       </h2>
 
@@ -57,19 +59,34 @@ const viewArticle = () => {
         {{ article.short_desc }}
       </p>
 
-      <div
-        class="flex justify-between items-center text-sm font-medium"
-      >
+      <div class="flex justify-between items-center text-sm font-medium">
         <time class="text-gray-500 dark:text-gray-400 italic">
           {{ formattedDate }}
         </time>
         <span
+          class="text-gray-500 dark:text-gray-400 inline-flex items-center gap-1"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12,6 12,12 16,14" />
+          </svg>
+          {{ article.time_read }} min.
+        </span>
+        <span
           class="inline-flex items-center text-primary-600 group-hover:text-primary-700 dark:text-primary-400 dark:group-hover:text-primary-300 transition-colors duration-200"
         >
           Lire l'article
-          <svg 
-            class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-200" 
-            viewBox="0 0 20 20" 
+          <svg
+            class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-200"
+            viewBox="0 0 20 20"
             fill="currentColor"
           >
             <path

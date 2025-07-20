@@ -11,7 +11,6 @@ export const fetchArticles = async () => {
       documentId: item.documentId,
       title: item.title,
       short_desc: item.short_desc,
-      content: item.content,
       date: item.date,
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
@@ -21,12 +20,7 @@ export const fetchArticles = async () => {
           id: tag.id,
           category: tag.category,
         })) || [],
-      source:
-        item.source?.map((src) => ({
-          id: src.id,
-          label: src.label,
-          url: src.url,
-        })) || [],
+      time_read: item.time_read,
     }));
   } catch (error) {
     console.error("Error fetching articles:", error);
@@ -65,5 +59,6 @@ export const fetchArticleByDocumentId = async (documentId) => {
         label: src.label,
         url: src.url,
       })) || [],
+    time_read: item.time_read,
   };
 };
