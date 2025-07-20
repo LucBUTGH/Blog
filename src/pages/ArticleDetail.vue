@@ -7,24 +7,22 @@ import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { fetchArticleByDocumentId } from "../api/articles";
 import TagBadge from "../components/TagBadge.vue";
-import type { Article } from "../types/article";
 
 const ICON_COPY = `
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M8 16V7a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v9a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3z"></path>
-    <rect x="6" y="12" width="10" height="10" rx="1"></rect>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy-icon lucide-copy">
+    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
   </svg>
 `;
 
 const ICON_CHECK = `
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="20 6 9 17 4 12"></polyline>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check">
+    <path d="M20 6 9 17l-5-5"/>
   </svg>
 `;
 
 const router = useRouter();
 const route = useRoute();
-const article = ref<Article | null>(null);
+const article = ref(null);
 const loading = ref(true);
 const error = ref<string | null>(null);
 
@@ -167,7 +165,7 @@ const attachCopyListeners = () => {
         if (pre) {
           const block = pre.querySelector("code");
           if (block) {
-            copyToClipboard(block.textContent, button);
+            copyToClipboard(block.textContent, button as HTMLButtonElement);
           }
         }
       });
@@ -295,18 +293,62 @@ watch(renderedContent, () => {
 
       <!-- Article source -->
       <div
-        v-if="article.source"
+        v-if="article.source?.length"
         class="mt-12 text-sm text-gray-600 dark:text-gray-400 border-t pt-6 border-gray-200 dark:border-gray-700"
       >
-        Source :
-        <a
-          :href="article.source"
-          target="_blank"
-          rel="noopener"
-          class="text-primary-600 dark:text-primary-400 underline hover:opacity-80"
-        >
-          {{ article.source }}
-        </a>
+        <div class="flex items-center gap-2 font-medium mb-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="text-primary-500 dark:text-primary-400"
+          >
+            <path
+              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+            />
+          </svg>
+          <span>{{ article.source.length === 1 ? "Source" : "Sources" }}</span>
+        </div>
+        <ul class="space-y-2">
+          <li
+            v-for="(source, index) in article.source"
+            :key="source.id"
+            class="flex items-start gap-2 group"
+          >
+            <a
+              :href="source.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary-600 dark:text-primary-400 hover:underline group-hover:opacity-80 transition-opacity"
+            >
+              {{ source.label }}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="inline-block ml-1 mb-1"
+              >
+                <path
+                  d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+            </a>
+          </li>
+        </ul>
       </div>
     </article>
 
@@ -336,10 +378,15 @@ watch(renderedContent, () => {
   </div>
 
   <!-- Toast notification -->
-  <div
-    v-if="showToast"
-    class="fixed bottom-4 right-4 bg-[#111827] border border-white text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-fade-in"
+  <Transition
+    enter-active-class="animate-toast-enter"
+    leave-active-class="animate-toast-exit"
   >
-    {{ toastMessage }}
-  </div>
+    <div
+      v-if="showToast"
+      class="fixed bottom-4 right-4 bg-[#111827] border border-white text-white px-4 py-2 rounded-lg shadow-lg z-50"
+    >
+      {{ toastMessage }}
+    </div>
+  </Transition>
 </template>
